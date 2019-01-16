@@ -38,25 +38,82 @@ head(catch_long)
 Select to remove unnecessary columns (marginal sum and notes column). Gather to reformat from wide to long format. Collected species into one species column while keeping Region and Year fields intact. 
 Data tidying in progress...  
 
-```{r}
+```{r, eval = F, echo = F}
+### test to find the bad data value
 test_catch <- as.integer(catch_long$catch)  # try to convert to integer
 
 i <- which(is.na(test_catch)==TRUE)  # find which row(s) have a NA in test_catch  
 catch_long[i, ]  # returns row i (i is the index) and all columns
 ```
-
+Check to find erroneous character value in catch column.   
 
 ```{r}
 catch_cleaned <- catch_long %>% 
-  rename(catch_thousands = catch) #%>% 
-  #mutate(catch = catch_thousands * 1000)
+  rename(catch_thousands = catch) %>%
+  mutate(catch_thousands = ifelse(catch_thousands == "I", 1, catch_thousands)) %>%
+  mutate(catch_thousands = as.integer(catch_thousands)) %>% 
+  mutate(catch = catch_thousands * 1000)  
 
 head(catch_cleaned)
 ```
 
-Renamed the catch column to catch_thousands to reflect data units.  
+Renamed the catch column to catch_thousands to reflect data units. Corrected character data to integer by replacing the data and converting column to integer.  
 
 
 # Split-Apply-Combine  
 
+Calculate mean catch by species and year
+
+```{r}
+catch_total <- catch_cleaned %>% 
+  group_by(species, Year) %>% 
+  summarize(catch_mean = mean(catch), 
+            n_obs = n())
+
+head(catch_total)  
+```
+
+Use filter and arrange
+
+
+
+```{r}
+catch_chinook <- catch_cleaned %>% 
+  #filter(species == "Chinook" | species == "Pink")  # pipe == logical OR
+  arrange(-Year) # sort in descending order
+
+head(catch_chinook)
+```
+
+What do region codes mean? Join with region table to add columns
+
 # Joins  
+
+Read in Region definition table
+
+```{r}
+region_defs <- read.csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.303.1", 
+                            method = "libcurl"),
+                        stringsAsFactors = FALSE)
+
+head(region_defs)
+```
+
+Clean table, removing columns we don't need.
+
+```{r}
+region_clean <- region_defs %>% 
+  select(code, mgmtArea)
+
+head(region_clean)
+```
+
+Now that data are clean, join...
+
+```{r}
+catch_joined <- left_join(catch_cleaned, region_clean, 
+                          by = c("Region" = "code"))
+
+head(catch_joined)
+```
+
