@@ -1,0 +1,31 @@
+---
+title: "Data Tidying"
+author: "AB"
+date: "1/16/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo = FALSE}
+# load packages  
+library(dplyr)  
+library(tidyr) 
+# Produces warning about masking functions with same names in different packages. R assumes most recently added package first. Use 'package_name::function_name(...)' to specify that the other package's function should be used. Add warning = FALSE and message = FALSE to suppress warnings. 
+```
+
+# Data Cleaning 
+
+Read in the data.
+
+```{r}
+catch <- read.csv(file = "https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.302.1", 
+                  stringsAsFactors = FALSE)  
+head(catch)  
+```
+
+# Split-Apply-Combine  
+
+# Joins  
