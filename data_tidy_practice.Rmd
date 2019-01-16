@@ -33,7 +33,7 @@ Keyboard shortcut for pipe operator cmd + shift + m
 catch_long <- catch %>% 
   select(Region, Year, Chinook, Sockeye, Coho, Pink, Chum) %>% 
   gather(key = "species", value = "catch", -Year, -Region)  
-head(catch_long)
+#head(catch_long)
 ```
 Select to remove unnecessary columns (marginal sum and notes column). Gather to reformat from wide to long format. Collected species into one species column while keeping Region and Year fields intact. 
 Data tidying in progress...  
@@ -70,7 +70,7 @@ catch_total <- catch_cleaned %>%
   summarize(catch_mean = mean(catch), 
             n_obs = n())
 
-head(catch_total)  
+#head(catch_total)  
 ```
 
 Use filter and arrange
@@ -82,7 +82,7 @@ catch_chinook <- catch_cleaned %>%
   #filter(species == "Chinook" | species == "Pink")  # pipe == logical OR
   arrange(-Year) # sort in descending order
 
-head(catch_chinook)
+#head(catch_chinook)
 ```
 
 What do region codes mean? Join with region table to add columns
@@ -96,7 +96,7 @@ region_defs <- read.csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/
                             method = "libcurl"),
                         stringsAsFactors = FALSE)
 
-head(region_defs)
+#head(region_defs)
 ```
 
 Clean table, removing columns we don't need.
@@ -105,7 +105,7 @@ Clean table, removing columns we don't need.
 region_clean <- region_defs %>% 
   select(code, mgmtArea)
 
-head(region_clean)
+#head(region_clean)
 ```
 
 Now that data are clean, join...
@@ -114,6 +114,50 @@ Now that data are clean, join...
 catch_joined <- left_join(catch_cleaned, region_clean, 
                           by = c("Region" = "code"))
 
-head(catch_joined)
+#head(catch_joined)
+```
+
+# Spread
+
+Made a wide data frame using spread
+
+```{r}
+catch_wide <- catch_cleaned %>% 
+  filter(Year >1990) %>%  # drop some data to keep it smaller
+  select(-catch_thousands) %>% # drop some data to keep it smaller
+  spread(key = Year, value = catch) 
+
+head(catch_wide)
+```
+
+
+# Separate and Unite
+
+ISO date standard: YYYY-MM-DD
+
+```{r}
+dates_df <- data.frame(date = c("5/24/1930",
+                                "5/25/1930",
+                                "5/26/1930",
+                                "5/27/1930",
+                                "5/28/1930"),
+                       stringsAsFactors = FALSE)
+
+dates_df
+
+```
+
+```{r}
+dates_sep <- dates_df %>% 
+  separate(col = date, into = c("month", "day", "year"), sep = "/")
+
+dates_sep
+```
+Use unite to rebuild dates in ISO format; still need to pad month. 
+```{r}
+dates_unite <- dates_sep %>% 
+  unite(col = date_iso, year, month, day, sep = "-")
+
+dates_unite
 ```
 
