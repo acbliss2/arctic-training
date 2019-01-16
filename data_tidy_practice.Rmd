@@ -26,6 +26,18 @@ catch <- read.csv(file = "https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df3
 head(catch)  
 ```
 
+
+Keyboard shortcut for pipe operator cmd + shift + m  
+
+```{r}
+catch_long <- catch %>% 
+  select(Region, Year, Chinook, Sockeye, Coho, Pink, Chum) %>% 
+  gather(key = "species", value = "catch", -Year, -Region)  
+head(catch_long)
+```
+Select to remove unnecessary columns (marginal sum and notes column). Gather to reformat from wide to long format. Collected species into one species column while keeping Region and Year fields intact. 
+Data tidying in progress...  
+
 # Split-Apply-Combine  
 
 # Joins  
