@@ -3,7 +3,7 @@ Sample code from Arctic Data Center training
 
 This repository is used as:
 
-* An introduction to git
+* An introduction to git - AB changed this 
 * Using git with RStudio
 * Carolyn changed this line
 
