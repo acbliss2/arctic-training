@@ -38,6 +38,25 @@ head(catch_long)
 Select to remove unnecessary columns (marginal sum and notes column). Gather to reformat from wide to long format. Collected species into one species column while keeping Region and Year fields intact. 
 Data tidying in progress...  
 
+```{r}
+test_catch <- as.integer(catch_long$catch)  # try to convert to integer
+
+i <- which(is.na(test_catch)==TRUE)  # find which row(s) have a NA in test_catch  
+catch_long[i, ]  # returns row i (i is the index) and all columns
+```
+
+
+```{r}
+catch_cleaned <- catch_long %>% 
+  rename(catch_thousands = catch) #%>% 
+  #mutate(catch = catch_thousands * 1000)
+
+head(catch_cleaned)
+```
+
+Renamed the catch column to catch_thousands to reflect data units.  
+
+
 # Split-Apply-Combine  
 
 # Joins  
