@@ -14,6 +14,7 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(DT)
+library(leaflet)
 ```
 
 # Escapement Data
@@ -79,6 +80,20 @@ ggplot(data = filter(annual_esc, SASAP.Region == "Kodiak"),
   ggtitle("Kodiak Salmon Escapement") +
   my_theme
   
+```
+
+A timeseries of escapement by species for each regions
+
+```{r, echo = F, fig.height = 10, fig.width= 8}
+ggplot(annual_esc, aes(x = year, y = escapement, color = Species)) + 
+  geom_line() +
+  geom_point() +
+  facet_wrap(~SASAP.Region, scales = "free", ncol = 2) +  
+  # create plots of individual regions; the tilde is used for linear models, so region is the dependent var in this example 
+  # "free_y", "free_x", or "free" allows the axis to scale freely for each subplot
+  my_theme
+
+#ggsave("region_escapement.png")  #save the plot as a png in the top-level dir; default saves last plot - save ggplot object to var and add "plot = gg_ob_name" to ggsacve 
 ```
 
 
