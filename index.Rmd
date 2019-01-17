@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = F)
 ```
 
 ```{r, echo = F, warning = F, message = F}
@@ -98,3 +98,22 @@ ggplot(annual_esc, aes(x = year, y = escapement, color = Species)) +
 
 
 # Interactive Map
+
+Make a map using leaflet 
+
+* find unique locations with lat/lon values  
+* clean to remove observations that are missing a lat or long value
+
+```{r, echo = F}
+locations <- esc %>% 
+  distinct(Location, Latitude, Longitude) %>% 
+  drop_na()  # remove rows with a NA value in any column  
+#datatable(locations)  
+```
+
+```{r, echo = F}
+leaflet(locations) %>% 
+  addTiles() %>% # brings in a basemap
+  addMarkers(~ Longitude, ~ Latitude, popup = ~ Location)  
+```
+
