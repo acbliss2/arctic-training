@@ -1,0 +1,67 @@
+---
+title: "ROpenSci Demo"
+author: "AB"
+date: "1/18/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 'rnoaa' package
+
+```{r, echo = FALSE}
+#install.packages("rnoaa")
+#install.packages("ncdf4")
+
+library(rnoaa)
+library(ncdf4)
+library(ggplot2)
+```
+
+Read in buoy data from NOAA dataset
+
+```{r}
+bd <- buoy(dataset = "cwind", buoyid = "46080", year = 2018, datatype = "c")
+```
+
+Coerce the time field to POSIXct. The date/time string is not ISO standard, so we need to parse the string to reformat to keep the times.  
+
+Use strptime format to correct date/time.
+
+```{r}
+wind_speed <- data.frame(time = strptime(bd$data$time, format = "%Y-%m-%dT%TZ"), 
+                         speed = bd$data$wind_spd)
+```
+
+```{r}
+ggplot(wind_speed, aes(x = time, y = speed)) + geom_point()
+```
+
+# 'mapr' package
+
+
+```{r}
+library(mapr)
+library(spocc)
+```
+
+Plot locations of GBIF species occurrence data for grizzly, polar, and spirit bears
+
+```{r}
+spp <- c("Ursus arctos", "Ursus maritimus", "Ursus americanus kermodei")  
+bears <- occ(query = spp, 
+             from = "gbif", 
+             has_coords = TRUE, 
+             limit = 500)  
+```
+
+```{r}
+map_leaflet(bears, color = c("blue", "grey", "pink"), size = 1)
+```
+
+```{r}
+spirit_bears <- bears$gbif$data$Ursus_americanus_kermodeis
+```
+
