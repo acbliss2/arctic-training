@@ -1,0 +1,29 @@
+---
+title: "Temp Conversion Test"
+author: "AB"
+date: "1/17/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Sourcing our utility functions
+
+```{r}
+source("fahr_to_celsius.R")
+
+```
+
+```{r}
+airtemps <- c(212, 33.5, 90, 100, 0 ,-40)
+
+cel <- fahr_to_celsius(airtemps)
+
+far <- celsius_to_fahr(cel)
+
+airtemps == far
+
+```
+
